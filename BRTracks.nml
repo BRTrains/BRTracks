@@ -1,0 +1,1315 @@
+# 1 "BRTracks.pnml"
+# 1 "<built-in>"
+# 1 "<command-line>"
+# 1 "BRTracks.pnml"
+# 1 "src/header.pnml" 1
+grf {
+ grfid: "BRT\17";
+ name: string(STR_GRF_NAME);
+ desc: string(STR_GRF_DESCRIPTION);
+ version: 203;
+ min_compatible_version: 1;
+
+ param 0 {
+  param_speedlimit {
+   type: bool;
+   def_value: 1;
+   name: string(STR_PARAM_SPEEDLIMIT);
+   desc: string(STR_PARAM_SPEEDLIMIT_DESC);
+  }
+ }
+ param 1 {
+  param_complexmode {
+   type: int;
+   min_value: 0;
+   max_value: 5;
+   def_value: 1;
+   name: string(STR_PARAM_COMPLEX_MODE);
+   desc: string(STR_PARAM_COMPLEX_MODE_DESC);
+   names : {
+    0: string(STR_COMPLEX_NONE);
+    1: string(STR_COMPLEX_HISTORIC);
+    2: string(STR_COMPLEX_SPEED);
+    3: string(STR_COMPLEX_RA);
+    4: string(STR_COMPLEX_GAUGE);
+    5: string(STR_COMPLEX_ELECTRIFICATION);
+
+
+   };
+  }
+ }
+
+ param 2 {
+  param_bridgegraphics {
+   type: int;
+   min_value: 0;
+   max_value: 1;
+   def_value: 0;
+   name: string(STR_PARAM_BRIDGE);
+   desc: string(STR_PARAM_BRIDGE_DESC);
+   names : {
+    0: string(STR_BRIDGE_OVERLAY);
+    1: string(STR_BRIDGE_UNDERLAY);
+
+
+   };
+  }
+ }
+
+  param 3 {
+  param_ballastwidth {
+   type: int;
+   min_value: 0;
+   max_value: 1;
+   def_value: 0;
+   name: string(STR_PARAM_BALLAST);
+   desc: string(STR_PARAM_BALLAST_DESC);
+   names : {
+    0: string(STR_BALLAST_NORMAL);
+    1: string(STR_BALLAST_WIDE);
+
+
+   };
+  }
+ }
+}
+# 2 "BRTracks.pnml" 2
+# 1 "src/tt-table-definitions.pnml" 1
+# 3 "BRTracks.pnml" 2
+# 1 "src/spritetemplate.pnml" 1
+/* Default ground tile template (re-use as needed) */
+template ground_tile(x, y) { [x, y, 64, 31, -32, 0] }
+
+/**********************************************
+ * Track underlays (tracks + ballast):
+ **********************************************/
+/* Underlays (single track bits with ballast) * Used for bridge surfaces also, therefore the template is split */
+
+
+template tmpl_underlay_straight() {
+[ 75, 0, 64,31, -31, 0]
+[ 0, 0, 64,31, -31, 0]
+}
+
+template tmpl_underlay_slope() {
+[ 75, 40, 64,39, -31, -8]
+[150, 40, 64,23, -31, 0]
+[225, 40, 64,23, -31, 0]
+[300, 40, 64,39, -30, -9]
+}
+
+template tmpl_underlay_diagonal() {
+[150, 0, 64,31, -31, 0]
+[225, 0, 64,31, -31, 0]
+[ 0, 40, 64,31, -31, 0]
+[300, 0, 64,31, -31, 0]
+}
+
+template tmpl_underlay_railtypes() {
+    tmpl_underlay_straight()
+    tmpl_underlay_diagonal()
+    tmpl_underlay_slope()
+
+    /* X-crossing */
+    ground_tile(0, 120)
+
+    /* underlay for crossings w/o tracks */
+    ground_tile( 0, 80)
+    ground_tile(225, 80)
+    ground_tile(150, 80)
+    ground_tile( 75, 80)
+    ground_tile(300, 80)
+}
+
+/**********************************************
+ * Track overlays (tracks without ballast):
+ **********************************************/
+
+/* Template for overlays; 2x straight track, 4x diagonal track, 4x slope */
+
+template tmpl_overlay_straight() {
+[ 0,155, 40,21, -19, 5]
+[ 50,155, 40,21, -19, 5]
+}
+
+template tmpl_overlay_slopes() {
+[ 0,195, 64,39, -31, -8]
+[ 75,195, 64,23, -31, 0]
+[150,195, 64,23, -31, 0]
+[225,195, 64,39, -32, -9]
+}
+
+template tmpl_overlay_diagonal() {
+[100,155, 40, 7, -19, 4]
+[150,155, 40, 7, -21, 20]
+[200,155, 12,19, 11, 6]
+[250,155, 12,19, -21, 6]
+}
+
+// track_type overlays
+template tmpl_overlay_railtypes() {
+    tmpl_overlay_straight()
+    tmpl_overlay_diagonal()
+    tmpl_overlay_slopes()
+}
+
+/**********************************************
+ * Level crossings:
+ **********************************************/
+
+/* Level crossings require differing sprites depending
+ * on the open/closed state and on the driving side */
+
+/* Template for the track overlays (x/y) */
+template tmpl_rails_crossing(x,y) {
+    [x, y, 44, 23, -21, 4]
+    [x+50, y, 44, 23, -21, 4]
+}
+
+template tmpl_level_crossing_railtypes_open(y) {
+    tmpl_rails_crossing(5, 5)
+
+    [ 0, y, 5,12, -3, -8]
+    [ 50, y, 8,21, -5, -14]
+    [100, y, 6,23, -7, -20]
+    [150, y, 5,12, -5, -8]
+    [200, y, 7,21, 3, -15]
+    [250, y, 5,12, -1, -8]
+    [300, y, 5,12, -3, -10]
+    [350, y, 8,22, -3, -19]
+}
+
+template tmpl_level_crossing_railtypes_closed(y) {
+    tmpl_rails_crossing(5, 5)
+
+    [ 0, y, 5, 12, -3, -8]
+    [ 50, y, 19, 19, -4, -6]
+    [100, y, 23, 17, -24, -9]
+    [150, y, 5, 12, -5, -8]
+    [200, y, 25, 14, 3, -9]
+    [250, y, 5, 12, -1, -8]
+    [300, y, 5, 12, -3, -10]
+    [350, y, 19, 14, -15, -11]
+}
+
+template tmpl_level_crossing_railtypes_left_open(y) {
+    tmpl_rails_crossing(5, 5)
+
+    [ 0, y, 7, 21, 0, -14]
+    [ 50, y, 5, 12, -2, -6]
+    [100, y, 5, 12, -3, -9]
+    [150, y, 7, 21, -7, -15]
+    [200, y, 5, 12, 4, -7]
+    [250, y, 7, 22, 0, -17]
+    [300, y, 6, 21, -2, -19]
+    [350, y, 5, 12, -3, -9]
+}
+template tmpl_level_crossing_railtypes_left_closed(y) {
+    tmpl_rails_crossing(5, 5)
+
+    [ 0, y, 21, 19, -14, -6]
+    [ 50, y, 5, 12, -2, -6]
+    [100, y, 5, 12, -3, -9]
+    [150, y, 23, 15, -23, -9]
+    [200, y, 5, 12, 4, -7]
+    [250, y, 23, 17, 0, -7]
+    [300, y, 21, 13, -2, -11]
+    [350, y, 5, 12, -3, -9]
+}
+
+/**********************************************
+ * Tracks in tunnels:
+ **********************************************/
+/* Template for tunnel track overlays */
+template tmpl_tunnel_tracks() {
+    ground_tile(75, 0)
+    ground_tile( 0, 0)
+    ground_tile(75, 50)
+    ground_tile( 0, 50)
+}
+
+/**********************************************
+ * Depots:
+ **********************************************/
+/* Template for depot sprites */
+template tmpl_depot() {
+    [200, 10, 16, 8, 17, 7]
+    [118, 8, 64, 47, -9, -31]
+    [ 0, 10, 16, 8, -31, 7]
+    [ 37, 8, 64, 47, -53, -31]
+    [ 37, 63, 64, 47, -53, -31]
+    [118, 63, 64, 47, -9, -31]
+}
+
+
+/**********************************************
+ * Bridge surfaces:
+ **********************************************/
+/* Bridge surface, uses the same sprites as track underlays, but in a different order */
+template tmpl_bridges_underlay() {
+    tmpl_underlay_straight()
+    tmpl_underlay_slope()
+    tmpl_underlay_diagonal()
+}
+
+template tmpl_bridges_overlay() {
+ tmpl_overlay_straight()
+ tmpl_overlay_slopes()
+ tmpl_overlay_diagonal()
+}
+
+/**********************************************
+ * Fences:
+ **********************************************/
+
+/* Template for fences, parametrized to allow multiple sets of fences (unused) */
+template tmpl_fences(y) {
+    [ 0, y, 32,20, -30, -4]
+    [ 48, y, 32,20, 0, -3]
+    [ 96, y, 2,30, 0,-17]
+    [112, y, 64, 9, -30, -4]
+    [192, y, 32,12, -30, -4]
+    [240, y, 32,12, 2, -3]
+    [288, y, 32,28, -31,-12]
+    [350, y, 32,28, 1,-10]
+}
+
+/**********************************************
+ * GUI sprites:
+ **********************************************/
+
+/* Template for a single icon sprite */
+template tmpl_gui_icon(x, y) {
+    [x, y, 20, 20, 0, 0]
+}
+
+/* Template for a single cursor sprite */
+template tmpl_gui_cursor(x, y) {
+    [x, y, 32, 32, 0, 0]
+}
+/* Template for all the GUI sprites (8 icons + 8 cursors) */
+template tmpl_gui() {
+    tmpl_gui_icon( 0, 0)
+    tmpl_gui_icon( 25, 0)
+    tmpl_gui_icon( 50, 0)
+    tmpl_gui_icon( 75, 0)
+    tmpl_gui_icon(100, 0)
+    tmpl_gui_icon(125, 0)
+    tmpl_gui_icon(150, 0)
+    tmpl_gui_icon(175, 0)
+
+    tmpl_gui_cursor(200, 0)
+    tmpl_gui_cursor(250, 0)
+    tmpl_gui_cursor(300, 0)
+    tmpl_gui_cursor(350, 0)
+    tmpl_gui_cursor(400, 0)
+    tmpl_gui_cursor(450, 0)
+    tmpl_gui_cursor(500, 0)
+    tmpl_gui_cursor(550, 0)
+}
+# 4 "BRTracks.pnml" 2
+
+railtypetable {
+  "RAIL", "RLOW", "RMED", "RHIG", "SAAN", "SABN", "SACN", "SBAN", "SBBN", "SBCN", "SCAN", "SCBN", "SCCN", "SDAN", "SDBN", "ELRL", "ELOW", "EMED", "EHIG", "HSTR", "SAAE", "SABE", "SACE", "SBAE", "SBBE", "SBCE", "SCAE", "SCBE", "SCCE", "SDAE", "SDBE", "SEAE", "SEBE", "3RDR", "3LOW", "3MED", "SAA3", "SAB3", "SAC3", "SBA3", "SBB3", "SBC3", "SCA3", "SCB3", "SCC3", "4RDR", "4LOW", "4MED", "SAA4", "SAB4", "SAC4", "SBA4", "SBB4", "SBC4", "SCA4", "SCB4", "SCC4", "3RDC", "CLOW", "CMED", "SAAZ", "SABZ", "SACZ", "SBAZ", "SBBZ", "SBCZ", "SCAZ", "SCBZ", "SCCZ"
+}
+
+# 1 "src/signals.pnml" 1
+
+template tmpl_signals(x,y) {
+ [x + 0, y, 20, 30, -9, -28] // ne-sw red
+ [x + 30, y, 20, 30, -9, -28] //       green
+ [x + 60, y, 20, 30, -9, -28] // sw-ne red
+ [x + 90, y, 20, 30, -9, -28] //       green
+ [x + 120, y, 20, 30, -9, -28] // se-nw red
+ [x + 150, y, 20, 30, -9, -28] //       green
+ [x + 180, y, 20, 30, -9, -28] // nw-se red
+ [x + 210, y, 20, 30, -9, -28] //       green
+ [x + 300, y, 20, 30, -9, -28] // e-w   red
+ [x + 330, y, 20, 30, -9, -28] //       green
+ [x + 240, y, 20, 30, -9, -28] // w-e   red
+ [x + 270, y, 20, 30, -9, -28] //       green
+ [x + 360, y, 20, 30, -9, -28] // s-n   red
+ [x + 390, y, 20, 30, -9, -28] //       green
+ [x + 420, y, 20, 30, -9, -28] // n-s   red
+ [x + 450, y, 20, 30, -9, -28] //       green
+}
+
+//1275-1290 signals
+replace spr1275(1275, "gfx/Signals/Standard/light-generic.png") { tmpl_signals(10, 50) }
+# 10 "BRTracks.pnml" 2
+# 1 "src/extra-signals.pnml" 1
+/* Signals used for both traffic sides */
+
+
+template tmpl_signals_file(x,y,file) {
+ [x + 0, y, 20, 30, -9, -28, file] // ne-sw red
+ [x + 30, y, 20, 30, -9, -28, file] //       green
+ [x + 60, y, 20, 30, -9, -28, file] // sw-ne red
+ [x + 90, y, 20, 30, -9, -28, file] //       green
+ [x + 120, y, 20, 30, -9, -28, file] // se-nw red
+ [x + 150, y, 20, 30, -9, -28, file] //       green
+ [x + 180, y, 20, 30, -9, -28, file] // nw-se red
+ [x + 210, y, 20, 30, -9, -28, file] //       green
+ [x + 300, y, 20, 30, -9, -28, file] // e-w   red
+ [x + 330, y, 20, 30, -9, -28, file] //       green
+ [x + 240, y, 20, 30, -9, -28, file] // w-e   red
+ [x + 270, y, 20, 30, -9, -28, file] //       green
+ [x + 360, y, 20, 30, -9, -28, file] // s-n   red
+ [x + 390, y, 20, 30, -9, -28, file] //       green
+ [x + 420, y, 20, 30, -9, -28, file] // n-s   red	
+ [x + 450, y, 20, 30, -9, -28, file] //       green	
+}
+
+replacenew(PRE_SIGNAL, "") {
+ tmpl_signals_file( 10, 50, "gfx/Signals/Standard/light-entry.png")
+ tmpl_signals_file( 10, 50, "gfx/Signals/Standard/light-exit.png")
+ tmpl_signals_file( 10, 50, "gfx/Signals/Standard/light-combo.png")
+}
+
+
+// British style. Replace later by German style, if necessary
+replacenew(PRE_SIGNAL_SEMAPHORE_PBS, "", 48) {
+ tmpl_signals_file( 10, 50, "gfx/Signals/Standard/semaphores-leftside-generic.png")
+ tmpl_signals_file( 10, 50, "gfx/Signals/Standard/semaphores-leftside-entry.png")
+ tmpl_signals_file( 10, 50, "gfx/Signals/Standard/semaphores-leftside-exit.png")
+ tmpl_signals_file( 10, 50, "gfx/Signals/Standard/semaphores-leftside-combo.png")
+
+//PBS unused type 1 toyland (standard)
+ [ 150, 6, 5, 22, -2, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 166, 6, 5, 22, -2, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 182, 6, 4, 22, -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 198, 6, 4, 22, -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 214, 6, 4, 22, -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 230, 6, 4, 22, -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 246, 6, 5, 22, -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 262, 6, 5, 22, -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 278, 6, 5, 22, -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 294, 6, 5, 22, -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 310, 6, 5, 22, -2, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 326, 6, 5, 22, -2, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 341, 6, 6, 22, -3, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 357, 6, 6, 22, -3, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 373, 6, 6, 22, -3, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 389, 6, 6, 22, -3, -20, "gfx/Signals/Standard/signals_pbs.png"]
+//PBS unused type 2 toyland (oneway)
+ [ 150, 36, 5, 22, -2, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 166, 36, 5, 22, -2, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 182, 36, 4, 22, -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 198, 36, 4, 22, -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 214, 36, 4, 22, -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 230, 36, 4, 22, -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 246, 36, 5, 22, -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 262, 36, 5, 22, -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 278, 36, 5, 22, -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 294, 36, 5, 22, -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 310, 36, 5, 22, -2, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 326, 36, 5, 22, -2, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 341, 36, 6, 22, -3, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 357, 36, 6, 22, -3, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 373, 36, 6, 22, -3, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 389, 36, 6, 22, -3, -20, "gfx/Signals/Standard/signals_pbs.png"]
+//PBS standard toyland
+ [ 150, 6, 5, 22, -2, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 166, 6, 5, 22, -2, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 182, 6, 4, 22, -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 198, 6, 4, 22, -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 214, 6, 4, 22, -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 230, 6, 4, 22, -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 246, 6, 5, 22, -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 262, 6, 5, 22, -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 278, 6, 5, 22, -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 294, 6, 5, 22, -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 310, 6, 5, 22, -2, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 326, 6, 5, 22, -2, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 341, 6, 6, 22, -3, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 357, 6, 6, 22, -3, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 373, 6, 6, 22, -3, -20, "gfx/Signals/Standard/signals_pbs.png"]
+//PBS oneway toyland
+ [ 150, 36, 5, 22, -2, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 166, 36, 5, 22, -2, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 182, 36, 4, 22, -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 198, 36, 4, 22, -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 214, 36, 4, 22, -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 230, 36, 4, 22, -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 246, 36, 5, 22, -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 262, 36, 5, 22, -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 278, 36, 5, 22, -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 294, 36, 5, 22, -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 310, 36, 5, 22, -2, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 326, 36, 5, 22, -2, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 341, 36, 6, 22, -3, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 357, 36, 6, 22, -3, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 373, 36, 6, 22, -3, -20, "gfx/Signals/Standard/signals_pbs.png"]
+ [ 389, 36, 6, 22, -3, -20, "gfx/Signals/Standard/signals_pbs.png"]
+
+ tmpl_signals_file( 10, 50, "gfx/Signals/Standard/semaphores-leftside-pbs.png") //semaphore PBS 2way
+ tmpl_signals_file( 10, 50, "gfx/Signals/Standard/semaphores-leftside-pbs-oneway.png")//semaphore pbs 1way
+
+//semaphore pbs unused
+ [ 738, 248, 11, 21, -6, -19, "gfx/Signals/Standard/semaphores.png"]
+ [ 754, 248, 8, 23, -3, -21, "gfx/Signals/Standard/semaphores.png"]
+ [ 770, 248, 11, 21, 0, -19, "gfx/Signals/Standard/semaphores.png"]
+ [ 786, 248, 10, 21, 0, -19, "gfx/Signals/Standard/semaphores.png"]
+ [ 2, 296, 10, 21, 0, -19, "gfx/Signals/Standard/semaphores.png"]
+ [ 18, 296, 7, 23, 0, -21, "gfx/Signals/Standard/semaphores.png"]
+ [ 34, 296, 11, 21, -7, -19, "gfx/Signals/Standard/semaphores.png"]
+ [ 50, 296, 11, 21, -7, -19, "gfx/Signals/Standard/semaphores.png"]
+ [ 66, 296, 4, 21, 1, -19, "gfx/Signals/Standard/semaphores.png"]
+ [ 82, 296, 4, 24, 1, -22, "gfx/Signals/Standard/semaphores.png"]
+ [ 98, 296, 4, 23, -1, -21, "gfx/Signals/Standard/semaphores.png"]
+ [ 114, 296, 4, 26, -1, -24, "gfx/Signals/Standard/semaphores.png"]
+ [ 130, 296, 12, 21, -7, -19, "gfx/Signals/Standard/semaphores.png"]
+ [ 162, 296, 9, 21, -4, -19, "gfx/Signals/Standard/semaphores.png"]
+ [ 178, 296, 12, 21, 0, -19, "gfx/Signals/Standard/semaphores.png"]
+ [ 210, 296, 9, 21, 0, -19, "gfx/Signals/Standard/semaphores.png"]
+ [ 226, 296, 11, 21, -6, -19, "gfx/Signals/Standard/semaphores.png"]
+ [ 242, 296, 8, 23, -3, -21, "gfx/Signals/Standard/semaphores.png"]
+ [ 258, 296, 11, 21, 0, -19, "gfx/Signals/Standard/semaphores.png"]
+ [ 274, 296, 10, 21, 0, -19, "gfx/Signals/Standard/semaphores.png"]
+ [ 290, 296, 10, 21, 0, -19, "gfx/Signals/Standard/semaphores.png"]
+ [ 306, 296, 7, 23, 0, -21, "gfx/Signals/Standard/semaphores.png"]
+ [ 322, 296, 11, 21, -7, -19, "gfx/Signals/Standard/semaphores.png"]
+ [ 338, 296, 11, 21, -7, -19, "gfx/Signals/Standard/semaphores.png"]
+ [ 354, 296, 4, 21, 1, -19, "gfx/Signals/Standard/semaphores.png"]
+ [ 370, 296, 4, 24, 1, -22, "gfx/Signals/Standard/semaphores.png"]
+ [ 386, 296, 4, 23, -1, -21, "gfx/Signals/Standard/semaphores.png"]
+ [ 402, 296, 4, 26, -1, -24, "gfx/Signals/Standard/semaphores.png"]
+ [ 418, 296, 12, 21, -7, -19, "gfx/Signals/Standard/semaphores.png"]
+ [ 450, 296, 9, 21, -4, -19, "gfx/Signals/Standard/semaphores.png"]
+ [ 466, 296, 12, 21, 0, -19, "gfx/Signals/Standard/semaphores.png"]
+ [ 498, 296, 9, 21, 0, -19, "gfx/Signals/Standard/semaphores.png"]
+}
+# 11 "BRTracks.pnml" 2
+# 1 "src/SAAN.pnml" 1
+
+/* Spriteset containing all underlays */
+spriteset(track_underlays_normal, "gfx/SAAN/rails_overlays_wide2.png") {
+    tmpl_underlay_railtypes()
+}
+
+spriteset(track_underlays_wide, "gfx/SAAN/rails_overlays_wide2.png") {
+    tmpl_underlay_railtypes()
+}
+
+switch(FEAT_RAILTYPES, SELF, track_underlays, param_ballastwidth) {
+ 0: track_underlays_normal;
+ 1: track_underlays_wide;
+}
+
+
+/* Spriteset for overlays */
+spriteset(track_overlays, "gfx/SAAN/rails_overlays_wide2.png") {
+ tmpl_overlay_railtypes()
+}
+
+
+/**********************************************
+ * Level crossings:
+ **********************************************/
+
+// right hand traffic:
+spriteset(lc_right_closed, "gfx/SAAN/lc_right.png") {
+    tmpl_level_crossing_railtypes_closed(100)
+}
+spriteset(lc_right_open, "gfx/SAAN/lc_right.png") {
+    tmpl_level_crossing_railtypes_open(50)
+}
+
+// left hand traffic:
+spriteset(lc_left_closed, "gfx/SAAN/lc_left.png") {
+    tmpl_level_crossing_railtypes_left_closed(100)
+}
+spriteset(lc_left_open, "gfx/SAAN/lc_left.png") {
+    tmpl_level_crossing_railtypes_left_open(50)
+}
+
+switch(FEAT_RAILTYPES, SELF, right_level_crossing_state_switch, level_crossing_status) {
+    LEVEL_CROSSING_CLOSED: lc_right_closed;
+    lc_right_open;
+}
+switch(FEAT_RAILTYPES, SELF, left_level_crossing_state_switch, level_crossing_status) {
+    LEVEL_CROSSING_CLOSED: lc_left_closed;
+    lc_left_open;
+}
+switch(FEAT_RAILTYPES, SELF, level_crossing_switch, traffic_side) {
+    TRAFFIC_SIDE_LEFT: left_level_crossing_state_switch;
+    right_level_crossing_state_switch;
+}
+
+
+/**********************************************
+ * Tracks in tunnels:
+ **********************************************/
+
+spriteset(tunnel_overlays, "gfx/SAAN/tunnel_track2.png") {
+    tmpl_tunnel_tracks()
+}
+
+/**********************************************
+ * Depots:
+ **********************************************/
+
+/* Depots have differing sprites for normal and e-rail */
+spriteset(depot_normal_rail, "gfx/SAAN/depot_normal.png") {
+    tmpl_depot()
+}
+spriteset(depot_electric_rail, "gfx/SAAN/depot_electric.png") {
+    tmpl_depot()
+}
+
+
+/**********************************************
+ * Bridge surfaces:
+ **********************************************/
+/* Spriteset for bridge surfaces */
+spriteset(bridge_overlay, "gfx/SAAN/rails_overlays.png") {
+    tmpl_bridges_overlay()
+}
+
+spriteset(bridge_underlay, "gfx/SAAN/rails_overlays.png") {
+    tmpl_bridges_underlay()
+}
+
+switch(FEAT_RAILTYPES, SELF, bridge_switch, param_bridgegraphics) {
+ 0: bridge_overlay;
+ bridge_underlay;
+}
+
+/**********************************************
+ * Fences:
+ **********************************************/
+
+/* Spriteset for (company-coloured) fences */
+spriteset(fencesCC, "gfx/SAAN/fences.png") {
+    tmpl_fences(0)
+}
+
+/**********************************************
+ * GUI sprites:
+ **********************************************/
+
+/* Spritesets for the normal and electric GUI */
+spriteset(gui_normal, "gfx/SAAN/gui_rail.png") {
+    tmpl_gui()
+}
+spriteset(gui_electric, "gfx/SAAN/gui_erail.png") {
+    tmpl_gui()
+}
+
+/**********************************************
+ * Railtype definitions:
+ **********************************************/
+
+/* Define the normal rails */
+item(FEAT_RAILTYPES, SAAN, 0) {
+    /* Set only the most essential properties,
+     * Lots of compatible railtypes are defined to allow compatibility with
+     * various other sets out there */
+    property {
+   label: "RAIL";
+         name: string(STR_TRACK_TYPE_SAAN);
+         menu_text: string(STR_CONSTRUCTION_SAAN);
+   toolbar_caption: string(STR_CONSTRUCTION_SAAN);
+         build_window_caption: string(STR_VEHICLE_CONSTRUCTION_SAAN);
+         autoreplace_text: string(STR_AUTOREPLACE_SAAN);
+         new_engine_text: string(STR_NEW_ENGINE_SAAN);
+        compatible_railtype_list: ["RAIL", "RLOW", "RMED", "RHIG", "SAAN", "SABN", "SACN", "SBAN", "SBBN", "SBCN", "SCAN", "SCBN", "SCCN", "SDAN", "SDBN", "ELRL", "ELOW", "EMED", "EHIG", "HSTR", "SAAE", "SABE", "SACE", "SBAE", "SBBE", "SBCE", "SCAE", "SCBE", "SCCE", "SDAE", "SDBE", "SEAE", "SEBE", "3RDR", "3LOW", "3MED", "SAA3", "SAB3", "SAC3", "SBA3", "SBB3", "SBC3", "SCA3", "SCB3", "SCC3", "4RDR", "4LOW", "4MED", "SAA4", "SAB4", "SAC4", "SBA4", "SBB4", "SBC4", "SCA4", "SCB4", "SCC4", "3RDC", "CLOW", "CMED", "SAAZ", "SABZ", "SACZ", "SBAZ", "SBBZ", "SBCZ", "SCAZ", "SCBZ", "SCCZ"];
+        powered_railtype_list: ["RAIL", "RLOW", "RMED", "RHIG", "SAAN", "SABN", "SACN", "SBAN", "SBBN", "SBCN", "SCAN", "SCBN", "SCCN", "SDAN", "SDBN", "ELRL", "ELOW", "EMED", "EHIG", "HSTR", "SAAE", "SABE", "SACE", "SBAE", "SBBE", "SBCE", "SCAE", "SCBE", "SCCE", "SDAE", "SDBE", "SEAE", "SEBE", "3RDR", "3LOW", "3MED", "SAA3", "SAB3", "SAC3", "SBA3", "SBB3", "SBC3", "SCA3", "SCB3", "SCC3", "4RDR", "4LOW", "4MED", "SAA4", "SAB4", "SAC4", "SBA4", "SBB4", "SBC4", "SCA4", "SCB4", "SCC4", "3RDC", "CLOW", "CMED", "SAAZ", "SABZ", "SACZ", "SBAZ", "SBBZ", "SBCZ", "SCAZ", "SCBZ", "SCCZ"];
+   curve_speed_multiplier: 1;
+         station_graphics: RAILTYPE_STATION_NORMAL;
+         construction_cost: 8;
+         speed_limit: (125*param_speedlimit) mph;
+         acceleration_model: ACC_MODEL_RAIL;
+    }
+
+    /* Associate graphics with this railtype */
+    graphics {
+        track_overlay: track_overlays;
+        underlay: track_underlays;
+        level_crossings: level_crossing_switch;
+        tunnels: tunnel_overlays;
+        depots: depot_normal_rail;
+        bridge_surfaces: bridge_switch;
+        fences: fencesCC;
+        gui: gui_normal;
+        /* Caternary is not not implemented here, use the default */
+    }
+}
+
+item(FEAT_RAILTYPES, SAAE, 1) {
+    /* Set only the most essential properties,
+     * Lots of compatible railtypes are defined to allow compatibility with
+     * various other sets out there */
+    property {
+   label: "ELRL";
+         name: string(STR_TRACK_TYPE_SAAE);
+         menu_text: string(STR_CONSTRUCTION_SAAE);
+   toolbar_caption: string(STR_CONSTRUCTION_SAAE);
+         build_window_caption: string(STR_VEHICLE_CONSTRUCTION_SAAE);
+         autoreplace_text: string(STR_AUTOREPLACE_SAAE);
+         new_engine_text: string(STR_NEW_ENGINE_SAAE);
+        compatible_railtype_list: ["RAIL", "RLOW", "RMED", "RHIG", "SAAN", "SABN", "SACN", "SBAN", "SBBN", "SBCN", "SCAN", "SCBN", "SCCN", "SDAN", "SDBN", "ELRL", "ELOW", "EMED", "EHIG", "HSTR", "SAAE", "SABE", "SACE", "SBAE", "SBBE", "SBCE", "SCAE", "SCBE", "SCCE", "SDAE", "SDBE", "SEAE", "SEBE", "3RDR", "3LOW", "3MED", "SAA3", "SAB3", "SAC3", "SBA3", "SBB3", "SBC3", "SCA3", "SCB3", "SCC3", "4RDR", "4LOW", "4MED", "SAA4", "SAB4", "SAC4", "SBA4", "SBB4", "SBC4", "SCA4", "SCB4", "SCC4", "3RDC", "CLOW", "CMED", "SAAZ", "SABZ", "SACZ", "SBAZ", "SBBZ", "SBCZ", "SCAZ", "SCBZ", "SCCZ"];
+        powered_railtype_list: ["ELRL", "ELOW", "EMED", "EHIG", "HSTR", "SAAE", "SABE", "SACE", "SBAE", "SBBE", "SBCE", "SCAE", "SCBE", "SCCE", "SDAE", "SDBE", "SEAE", "SEBE", "3RDC", "CLOW", "CMED", "SAAZ", "SABZ", "SACZ", "SBAZ", "SBBZ", "SBCZ", "SCAZ", "SCBZ", "SCCZ"];
+  railtype_flags: bitmask(RAILTYPE_FLAG_CATENARY);
+   curve_speed_multiplier: 1;
+         station_graphics: RAILTYPE_STATION_NORMAL;
+         construction_cost: 12;
+         speed_limit: (125*param_speedlimit) mph;
+         acceleration_model: ACC_MODEL_RAIL;
+  introduction_date: date(1959,04,01);
+    }
+
+    /* Associate graphics with this railtype */
+    graphics {
+        track_overlay: track_overlays;
+        underlay: track_underlays;
+        level_crossings: level_crossing_switch;
+        tunnels: tunnel_overlays;
+        depots: depot_electric_rail;
+        bridge_surfaces: bridge_switch;
+        fences: fencesCC;
+        gui: gui_electric;
+        /* Caternary is not not implemented here, use the default */
+    }
+}
+# 12 "BRTracks.pnml" 2
+# 1 "src/SBAE.pnml" 1
+
+/* Spriteset containing all underlays */
+spriteset(track_underlays_SBAE, "gfx/SBAE/rails_overlays.png") {
+    tmpl_underlay_railtypes()
+}
+
+
+/* Spriteset for overlays */
+spriteset(track_overlays_SBAE, "gfx/SBAE/rails_overlays.png") {
+ tmpl_overlay_railtypes()
+}
+
+
+/**********************************************
+ * Level crossings:
+ **********************************************/
+
+// right hand traffic:
+spriteset(lc_right_closed_SBAE, "gfx/SBAE/lc_right.png") {
+    tmpl_level_crossing_railtypes_closed(100)
+}
+spriteset(lc_right_open_SBAE, "gfx/SBAE/lc_right.png") {
+    tmpl_level_crossing_railtypes_open(50)
+}
+
+// left hand traffic:
+spriteset(lc_left_closed_SBAE, "gfx/SBAE/lc_left.png") {
+    tmpl_level_crossing_railtypes_left_closed(100)
+}
+spriteset(lc_left_open_SBAE, "gfx/SBAE/lc_left.png") {
+    tmpl_level_crossing_railtypes_left_open(50)
+}
+
+switch(FEAT_RAILTYPES, SELF, right_level_crossing_state_switch_SBAE, level_crossing_status) {
+    LEVEL_CROSSING_CLOSED: lc_right_closed;
+    lc_right_open;
+}
+switch(FEAT_RAILTYPES, SELF, left_level_crossing_state_switch_SBAE, level_crossing_status) {
+    LEVEL_CROSSING_CLOSED: lc_left_closed;
+    lc_left_open;
+}
+switch(FEAT_RAILTYPES, SELF, level_crossing_switch_SBAE, traffic_side) {
+    TRAFFIC_SIDE_LEFT: left_level_crossing_state_switch_SBAE;
+    right_level_crossing_state_switch_SBAE;
+}
+
+
+/**********************************************
+ * Tracks in tunnels:
+ **********************************************/
+
+spriteset(tunnel_overlays_SBAE, "gfx/SBAE/tunnel_track.png") {
+    tmpl_tunnel_tracks()
+}
+
+/**********************************************
+ * Depots:
+ **********************************************/
+
+/* Depots have differing sprites for normal and e-rail */
+spriteset(depot_normal_rail_SBAE, "gfx/SBAE/depot_normal.png") {
+    tmpl_depot()
+}
+spriteset(depot_electric_rail_SBAE, "gfx/SBAE/depot_electric.png") {
+    tmpl_depot()
+}
+
+
+/**********************************************
+ * Bridge surfaces:
+ **********************************************/
+/* Spriteset for bridge surfaces */
+spriteset(bridge_overlay_SBAE, "gfx/SBAE/rails_overlays.png") {
+    tmpl_bridges_overlay()
+}
+
+spriteset(bridge_underlay_SBAE, "gfx/SBAE/rails_overlays.png") {
+    tmpl_bridges_underlay()
+}
+
+switch(FEAT_RAILTYPES, SELF, bridge_switch_SBAE, param_bridgegraphics) {
+ 0: bridge_overlay_SBAE;
+ bridge_underlay_SBAE;
+}
+
+
+/**********************************************
+ * Fences:
+ **********************************************/
+
+/* Spriteset for (company-coloured) fences */
+spriteset(fencesCC_SBAE, "gfx/SBAE/fences.png") {
+    tmpl_fences(0)
+}
+
+/**********************************************
+ * GUI sprites:
+ **********************************************/
+
+/* Spritesets for the normal and electric GUI */
+spriteset(gui_normal_SBAE, "gfx/SBAE/gui_rail.png") {
+    tmpl_gui()
+}
+spriteset(gui_electric_SBAE, "gfx/SBAE/gui_erail.png") {
+    tmpl_gui()
+}
+
+/**********************************************
+ * Railtype definitions:
+ **********************************************/
+
+item(FEAT_RAILTYPES, SBAE, 6) {
+    /* Set only the most essential properties,
+     * Lots of compatible railtypes are defined to allow compatibility with
+     * various other sets out there */
+    property {
+   label: "SBAE";
+         name: string(STR_TRACK_TYPE_SBAE);
+         menu_text: string(STR_CONSTRUCTION_SBAE);
+   toolbar_caption: string(STR_CONSTRUCTION_SBAE);
+         build_window_caption: string(STR_VEHICLE_CONSTRUCTION_SBAE);
+         autoreplace_text: string(STR_AUTOREPLACE_SBAE);
+         new_engine_text: string(STR_NEW_ENGINE_SBAE);
+        compatible_railtype_list: ["RAIL", "RLOW", "RMED", "RHIG", "SAAN", "SABN", "SACN", "SBAN", "SBBN", "SBCN", "SCAN", "SCBN", "SCCN", "SDAN", "SDBN", "ELRL", "ELOW", "EMED", "EHIG", "HSTR", "SAAE", "SABE", "SACE", "SBAE", "SBBE", "SBCE", "SCAE", "SCBE", "SCCE", "SDAE", "SDBE", "SEAE", "SEBE", "3RDR", "3LOW", "3MED", "SAA3", "SAB3", "SAC3", "SBA3", "SBB3", "SBC3", "SCA3", "SCB3", "SCC3", "4RDR", "4LOW", "4MED", "SAA4", "SAB4", "SAC4", "SBA4", "SBB4", "SBC4", "SCA4", "SCB4", "SCC4", "3RDC", "CLOW", "CMED", "SAAZ", "SABZ", "SACZ", "SBAZ", "SBBZ", "SBCZ", "SCAZ", "SCBZ", "SCCZ"];
+        powered_railtype_list: ["ELRL", "ELOW", "EMED", "EHIG", "HSTR", "SAAE", "SABE", "SACE", "SBAE", "SBBE", "SBCE", "SCAE", "SCBE", "SCCE", "SDAE", "SDBE", "SEAE", "SEBE", "3RDC", "CLOW", "CMED", "SAAZ", "SABZ", "SACZ", "SBAZ", "SBBZ", "SBCZ", "SCAZ", "SCBZ", "SCCZ"];
+  railtype_flags: bitmask(RAILTYPE_FLAG_CATENARY, RAILTYPE_FLAG_NO_LEVEL_CROSSING);
+   curve_speed_multiplier: 1;
+         station_graphics: RAILTYPE_STATION_NORMAL;
+         construction_cost: 12;
+         speed_limit: (143*param_speedlimit) mph;
+         acceleration_model: ACC_MODEL_RAIL;
+  introduction_date: date(1988,04,01);
+    }
+
+    /* Associate graphics with this railtype */
+    graphics {
+        track_overlay: track_overlays_SBAE;
+        underlay: track_underlays_SBAE;
+        level_crossings: level_crossing_switch_SBAE;
+        tunnels: tunnel_overlays_SBAE;
+        depots: depot_electric_rail_SBAE;
+        bridge_surfaces: bridge_switch_SBAE;
+        fences: fencesCC_SBAE;
+        gui: gui_electric_SBAE;
+        /* Caternary is not not implemented here, use the default */
+    }
+}
+# 13 "BRTracks.pnml" 2
+# 1 "src/SCAE.pnml" 1
+
+/* Spriteset containing all underlays */
+spriteset(track_underlays_SCAE, "gfx/SCAE/rails_overlays.png") {
+    tmpl_underlay_railtypes()
+}
+
+
+/* Spriteset for overlays */
+spriteset(track_overlays_SCAE, "gfx/SCAE/rails_overlays.png") {
+ tmpl_overlay_railtypes()
+}
+
+
+/**********************************************
+ * Level crossings:
+ **********************************************/
+
+// right hand traffic:
+spriteset(lc_right_closed_SCAE, "gfx/SCAE/lc_right.png") {
+    tmpl_level_crossing_railtypes_closed(100)
+}
+spriteset(lc_right_open_SCAE, "gfx/SCAE/lc_right.png") {
+    tmpl_level_crossing_railtypes_open(50)
+}
+
+// left hand traffic:
+spriteset(lc_left_closed_SCAE, "gfx/SCAE/lc_left.png") {
+    tmpl_level_crossing_railtypes_left_closed(100)
+}
+spriteset(lc_left_open_SCAE, "gfx/SCAE/lc_left.png") {
+    tmpl_level_crossing_railtypes_left_open(50)
+}
+
+switch(FEAT_RAILTYPES, SELF, right_level_crossing_state_switch_SCAE, level_crossing_status) {
+    LEVEL_CROSSING_CLOSED: lc_right_closed;
+    lc_right_open;
+}
+switch(FEAT_RAILTYPES, SELF, left_level_crossing_state_switch_SCAE, level_crossing_status) {
+    LEVEL_CROSSING_CLOSED: lc_left_closed;
+    lc_left_open;
+}
+switch(FEAT_RAILTYPES, SELF, level_crossing_switch_SCAE, traffic_side) {
+    TRAFFIC_SIDE_LEFT: left_level_crossing_state_switch_SCAE;
+    right_level_crossing_state_switch_SCAE;
+}
+
+
+/**********************************************
+ * Tracks in tunnels:
+ **********************************************/
+
+spriteset(tunnel_overlays_SCAE, "gfx/SCAE/tunnel_track.png") {
+    tmpl_tunnel_tracks()
+}
+
+/**********************************************
+ * Depots:
+ **********************************************/
+
+/* Depots have differing sprites for normal and e-rail */
+spriteset(depot_normal_rail_SCAE, "gfx/SCAE/depot_normal.png") {
+    tmpl_depot()
+}
+spriteset(depot_electric_rail_SCAE, "gfx/SCAE/depot_electric.png") {
+    tmpl_depot()
+}
+
+
+/**********************************************
+ * Bridge surfaces:
+ **********************************************/
+/* Spriteset for bridge surfaces */
+spriteset(bridge_overlay_SCAE, "gfx/SCAE/rails_overlays.png") {
+    tmpl_bridges_overlay()
+}
+
+spriteset(bridge_underlay_SCAE, "gfx/SCAE/rails_overlays.png") {
+    tmpl_bridges_underlay()
+}
+
+switch(FEAT_RAILTYPES, SELF, bridge_switch_SCAE, param_bridgegraphics) {
+ 0: bridge_overlay_SCAE;
+ bridge_underlay_SCAE;
+}
+
+
+/**********************************************
+ * Fences:
+ **********************************************/
+
+/* Spriteset for (company-coloured) fences */
+spriteset(fencesCC_SCAE, "gfx/SCAE/fences.png") {
+    tmpl_fences(0)
+}
+
+/**********************************************
+ * GUI sprites:
+ **********************************************/
+
+/* Spritesets for the normal and electric GUI */
+spriteset(gui_normal_SCAE, "gfx/SCAE/gui_rail.png") {
+    tmpl_gui()
+}
+spriteset(gui_electric_SCAE, "gfx/SCAE/gui_erail.png") {
+    tmpl_gui()
+}
+
+/**********************************************
+ * Railtype definitions:
+ **********************************************/
+
+item(FEAT_RAILTYPES, SCAE, 7) {
+    /* Set only the most essential properties,
+     * Lots of compatible railtypes are defined to allow compatibility with
+     * various other sets out there */
+    property {
+   label: "SCAE";
+         name: string(STR_TRACK_TYPE_SCAE);
+         menu_text: string(STR_CONSTRUCTION_SCAE);
+   toolbar_caption: string(STR_CONSTRUCTION_SCAE);
+         build_window_caption: string(STR_VEHICLE_CONSTRUCTION_SCAE);
+         autoreplace_text: string(STR_AUTOREPLACE_SCAE);
+         new_engine_text: string(STR_NEW_ENGINE_SCAE);
+        compatible_railtype_list: ["RAIL", "RLOW", "RMED", "RHIG", "SAAN", "SABN", "SACN", "SBAN", "SBBN", "SBCN", "SCAN", "SCBN", "SCCN", "SDAN", "SDBN", "ELRL", "ELOW", "EMED", "EHIG", "HSTR", "SAAE", "SABE", "SACE", "SBAE", "SBBE", "SBCE", "SCAE", "SCBE", "SCCE", "SDAE", "SDBE", "SEAE", "SEBE", "3RDR", "3LOW", "3MED", "SAA3", "SAB3", "SAC3", "SBA3", "SBB3", "SBC3", "SCA3", "SCB3", "SCC3", "4RDR", "4LOW", "4MED", "SAA4", "SAB4", "SAC4", "SBA4", "SBB4", "SBC4", "SCA4", "SCB4", "SCC4", "3RDC", "CLOW", "CMED", "SAAZ", "SABZ", "SACZ", "SBAZ", "SBBZ", "SBCZ", "SCAZ", "SCBZ", "SCCZ"];
+        powered_railtype_list: ["ELRL", "ELOW", "EMED", "EHIG", "HSTR", "SAAE", "SABE", "SACE", "SBAE", "SBBE", "SBCE", "SCAE", "SCBE", "SCCE", "SDAE", "SDBE", "SEAE", "SEBE", "3RDC", "CLOW", "CMED", "SAAZ", "SABZ", "SACZ", "SBAZ", "SBBZ", "SBCZ", "SCAZ", "SCBZ", "SCCZ"];
+  railtype_flags: bitmask(RAILTYPE_FLAG_CATENARY, RAILTYPE_FLAG_NO_LEVEL_CROSSING);
+   curve_speed_multiplier: 1;
+         station_graphics: RAILTYPE_STATION_NORMAL;
+         construction_cost: 12;
+         speed_limit: (186*param_speedlimit) mph;
+         acceleration_model: ACC_MODEL_RAIL;
+  introduction_date: date(2003,04,01);
+    }
+
+    /* Associate graphics with this railtype */
+    graphics {
+        track_overlay: track_overlays_SCAE;
+        underlay: track_underlays_SCAE;
+        level_crossings: level_crossing_switch_SCAE;
+        tunnels: tunnel_overlays_SCAE;
+        depots: depot_electric_rail_SCAE;
+        bridge_surfaces: bridge_switch_SCAE;
+        fences: fencesCC_SCAE;
+        gui: gui_electric_SCAE;
+        /* Caternary is not not implemented here, use the default */
+    }
+}
+# 14 "BRTracks.pnml" 2
+# 1 "src/SAA3.pnml" 1
+
+/* Spriteset containing all underlays */
+spriteset(track_underlays_normal_saa3, "gfx/SAA3/rails_overlays.png") {
+    tmpl_underlay_railtypes()
+}
+
+spriteset(track_underlays_wide_saa3, "gfx/SAA3/rails_overlays_wide.png") {
+    tmpl_underlay_railtypes()
+}
+
+switch(FEAT_RAILTYPES, SELF, track_underlays_saa3, param_ballastwidth) {
+ 0: track_underlays_normal_saa3;
+ 1: track_underlays_wide_saa3;
+}
+
+/* Spriteset for overlays */
+spriteset(track_overlays_saa3, "gfx/SAA3/rails_overlays.png") {
+ tmpl_overlay_railtypes()
+}
+
+
+/**********************************************
+ * Level crossings:
+ **********************************************/
+
+// right hand traffic:
+spriteset(lc_right_closed_saa3, "gfx/SAA3/lc_right.png") {
+    tmpl_level_crossing_railtypes_closed(100)
+}
+spriteset(lc_right_open_saa3, "gfx/SAA3/lc_right.png") {
+    tmpl_level_crossing_railtypes_open(50)
+}
+
+// left hand traffic:
+spriteset(lc_left_closed_saa3, "gfx/SAA3/lc_left.png") {
+    tmpl_level_crossing_railtypes_left_closed(100)
+}
+spriteset(lc_left_open_saa3, "gfx/SAA3/lc_left.png") {
+    tmpl_level_crossing_railtypes_left_open(50)
+}
+
+switch(FEAT_RAILTYPES, SELF, right_level_crossing_saa3_state_switch, level_crossing_status) {
+    LEVEL_CROSSING_CLOSED: lc_right_closed;
+    lc_right_open;
+}
+switch(FEAT_RAILTYPES, SELF, left_level_crossing_saa3_state_switch, level_crossing_status) {
+    LEVEL_CROSSING_CLOSED: lc_left_closed;
+    lc_left_open;
+}
+switch(FEAT_RAILTYPES, SELF, level_crossing_saa3_switch, traffic_side) {
+    TRAFFIC_SIDE_LEFT: left_level_crossing_saa3_state_switch;
+    right_level_crossing_saa3_state_switch;
+}
+
+
+/**********************************************
+ * Tracks in tunnels:
+ **********************************************/
+
+spriteset(tunnel_overlays_saa3, "gfx/SAA3/tunnel_track.png") {
+    tmpl_tunnel_tracks()
+}
+
+/**********************************************
+ * Depots:
+ **********************************************/
+
+/* Depots have differing sprites for normal and e-rail */
+spriteset(depot_normal_rail_saa3, "gfx/SAA3/depot_normal.png") {
+    tmpl_depot()
+}
+spriteset(depot_electric_rail_saa3, "gfx/SAA3/depot_electric.png") {
+    tmpl_depot()
+}
+
+
+/**********************************************
+ * Bridge surfaces:
+ **********************************************/
+/* Spriteset for bridge surfaces */
+spriteset(bridge_overlay_SAA3, "gfx/SAA3/rails_overlays.png") {
+    tmpl_bridges_overlay()
+}
+
+spriteset(bridge_underlay_SAA3, "gfx/SAA3/rails_overlays.png") {
+    tmpl_bridges_underlay()
+}
+
+switch(FEAT_RAILTYPES, SELF, bridge_switch_SAA3, param_bridgegraphics) {
+ 0: bridge_overlay_SAA3;
+ bridge_underlay_SAA3;
+}
+
+/**********************************************
+ * Fences:
+ **********************************************/
+
+/* Spriteset for (company-coloured) fences */
+spriteset(fencesCC_saa3, "gfx/SAA3/fences.png") {
+    tmpl_fences(0)
+}
+
+/**********************************************
+ * GUI sprites:
+ **********************************************/
+
+/* Spritesets for the normal and electric GUI */
+spriteset(gui_normal_saa3, "gfx/SAA3/gui_rail.png") {
+    tmpl_gui()
+}
+spriteset(gui_electric_saa3, "gfx/SAA3/gui_erail.png") {
+    tmpl_gui()
+}
+
+/**********************************************
+ * Railtype definitions:
+ **********************************************/
+
+/* Define the normal rails */
+item(FEAT_RAILTYPES, SAA3, 2) {
+    /* Set only the most essential properties,
+     * Lots of compatible railtypes are defined to allow compatibility with
+     * various other sets out there */
+    property {
+   label: "SAA3";
+         name: string(STR_TRACK_TYPE_SAA3);
+         menu_text: string(STR_CONSTRUCTION_SAA3);
+   toolbar_caption: string(STR_CONSTRUCTION_SAA3);
+         build_window_caption: string(STR_VEHICLE_CONSTRUCTION_SAA3);
+         autoreplace_text: string(STR_AUTOREPLACE_SAA3);
+         new_engine_text: string(STR_NEW_ENGINE_SAA3);
+        compatible_railtype_list: ["RAIL", "RLOW", "RMED", "RHIG", "SAAN", "SABN", "SACN", "SBAN", "SBBN", "SBCN", "SCAN", "SCBN", "SCCN", "SDAN", "SDBN", "ELRL", "ELOW", "EMED", "EHIG", "HSTR", "SAAE", "SABE", "SACE", "SBAE", "SBBE", "SBCE", "SCAE", "SCBE", "SCCE", "SDAE", "SDBE", "SEAE", "SEBE", "3RDR", "3LOW", "3MED", "SAA3", "SAB3", "SAC3", "SBA3", "SBB3", "SBC3", "SCA3", "SCB3", "SCC3", "4RDR", "4LOW", "4MED", "SAA4", "SAB4", "SAC4", "SBA4", "SBB4", "SBC4", "SCA4", "SCB4", "SCC4", "3RDC", "CLOW", "CMED", "SAAZ", "SABZ", "SACZ", "SBAZ", "SBBZ", "SBCZ", "SCAZ", "SCBZ", "SCCZ"];
+        powered_railtype_list: ["3RDR", "3LOW", "3MED", "SAA3", "SAB3", "SAC3", "SBA3", "SBB3", "SBC3", "SCA3", "SCB3", "SCC3", "4RDR", "4LOW", "4MED", "SAA4", "SAB4", "SAC4", "SBA4", "SBB4", "SBC4", "SCA4", "SCB4", "SCC4", "3RDC", "CLOW", "CMED", "SAAZ", "SABZ", "SACZ", "SBAZ", "SBBZ", "SBCZ", "SCAZ", "SCBZ", "SCCZ"];
+   curve_speed_multiplier: 1;
+         station_graphics: RAILTYPE_STATION_NORMAL;
+         construction_cost: 12;
+         speed_limit: (100*param_speedlimit) mph;
+         acceleration_model: ACC_MODEL_RAIL;
+  introduction_date: date(1913,04,01);
+    }
+
+    /* Associate graphics with this railtype */
+    graphics {
+        track_overlay: track_overlays_saa3;
+        underlay: track_underlays_saa3;
+        level_crossings: level_crossing_saa3_switch;
+        tunnels: tunnel_overlays_saa3;
+        depots: depot_normal_rail_saa3;
+        bridge_surfaces: bridge_switch_SAA3;
+        fences: fencesCC_saa3;
+        gui: gui_normal_saa3;
+        /* Caternary is not not implemented here, use the default */
+    }
+}
+
+item(FEAT_RAILTYPES, SAAZ, 3) {
+    /* Set only the most essential properties,
+     * Lots of compatible railtypes are defined to allow compatibility with
+     * various other sets out there */
+    property {
+   label: "SAAZ";
+         name: string(STR_TRACK_TYPE_SAAZ);
+         menu_text: string(STR_CONSTRUCTION_SAAZ);
+   toolbar_caption: string(STR_CONSTRUCTION_SAAZ);
+         build_window_caption: string(STR_VEHICLE_CONSTRUCTION_SAAZ);
+         autoreplace_text: string(STR_AUTOREPLACE_SAAZ);
+         new_engine_text: string(STR_NEW_ENGINE_SAAZ);
+        compatible_railtype_list: ["RAIL", "RLOW", "RMED", "RHIG", "SAAN", "SABN", "SACN", "SBAN", "SBBN", "SBCN", "SCAN", "SCBN", "SCCN", "SDAN", "SDBN", "ELRL", "ELOW", "EMED", "EHIG", "HSTR", "SAAE", "SABE", "SACE", "SBAE", "SBBE", "SBCE", "SCAE", "SCBE", "SCCE", "SDAE", "SDBE", "SEAE", "SEBE", "3RDR", "3LOW", "3MED", "SAA3", "SAB3", "SAC3", "SBA3", "SBB3", "SBC3", "SCA3", "SCB3", "SCC3", "4RDR", "4LOW", "4MED", "SAA4", "SAB4", "SAC4", "SBA4", "SBB4", "SBC4", "SCA4", "SCB4", "SCC4", "3RDC", "CLOW", "CMED", "SAAZ", "SABZ", "SACZ", "SBAZ", "SBBZ", "SBCZ", "SCAZ", "SCBZ", "SCCZ"];
+        powered_railtype_list: ["3RDC", "CLOW", "CMED", "SAAZ", "SABZ", "SACZ", "SBAZ", "SBBZ", "SBCZ", "SCAZ", "SCBZ", "SCCZ", "3RDR", "3LOW", "3MED", "SAA3", "SAB3", "SAC3", "SBA3", "SBB3", "SBC3", "SCA3", "SCB3", "SCC3", "4RDR", "4LOW", "4MED", "SAA4", "SAB4", "SAC4", "SBA4", "SBB4", "SBC4", "SCA4", "SCB4", "SCC4", "ELRL", "ELOW", "EMED", "EHIG", "HSTR", "SAAE", "SABE", "SACE", "SBAE", "SBBE", "SBCE", "SCAE", "SCBE", "SCCE", "SDAE", "SDBE", "SEAE", "SEBE"];
+  railtype_flags: bitmask(RAILTYPE_FLAG_CATENARY);
+   curve_speed_multiplier: 1;
+         station_graphics: RAILTYPE_STATION_NORMAL;
+         construction_cost: 16;
+         speed_limit: (100*param_speedlimit) mph;
+         acceleration_model: ACC_MODEL_RAIL;
+   introduction_date: date(1959,04,01);
+    }
+
+    /* Associate graphics with this railtype */
+    graphics {
+        track_overlay: track_overlays_saa3;
+        underlay: track_underlays_saa3;
+        level_crossings: level_crossing_saa3_switch;
+        tunnels: tunnel_overlays_saa3;
+        depots: depot_electric_rail_saa3;
+        bridge_surfaces: bridge_switch_SAA3;
+        fences: fencesCC_saa3;
+        gui: gui_electric_saa3;
+        /* Caternary is not not implemented here, use the default */
+    }
+}
+# 15 "BRTracks.pnml" 2
+# 1 "src/SAA4.pnml" 1
+
+/* Spriteset containing all underlays */
+spriteset(track_underlays_SAA4, "gfx/SAA4/rails_overlays.png") {
+    tmpl_underlay_railtypes()
+}
+
+
+/* Spriteset for overlays */
+spriteset(track_overlays_SAA4, "gfx/SAA4/rails_overlays.png") {
+ tmpl_overlay_railtypes()
+}
+
+
+/**********************************************
+ * Level crossings:
+ **********************************************/
+
+// right hand traffic:
+spriteset(lc_right_closed_SAA4, "gfx/SAA4/lc_right.png") {
+    tmpl_level_crossing_railtypes_closed(100)
+}
+spriteset(lc_right_open_SAA4, "gfx/SAA4/lc_right.png") {
+    tmpl_level_crossing_railtypes_open(50)
+}
+
+// left hand traffic:
+spriteset(lc_left_closed_SAA4, "gfx/SAA4/lc_left.png") {
+    tmpl_level_crossing_railtypes_left_closed(100)
+}
+spriteset(lc_left_open_SAA4, "gfx/SAA4/lc_left.png") {
+    tmpl_level_crossing_railtypes_left_open(50)
+}
+
+switch(FEAT_RAILTYPES, SELF, right_level_crossing_SAA4_state_switch, level_crossing_status) {
+    LEVEL_CROSSING_CLOSED: lc_right_closed;
+    lc_right_open;
+}
+switch(FEAT_RAILTYPES, SELF, left_level_crossing_SAA4_state_switch, level_crossing_status) {
+    LEVEL_CROSSING_CLOSED: lc_left_closed;
+    lc_left_open;
+}
+switch(FEAT_RAILTYPES, SELF, level_crossing_SAA4_switch, traffic_side) {
+    TRAFFIC_SIDE_LEFT: left_level_crossing_SAA4_state_switch;
+    right_level_crossing_SAA4_state_switch;
+}
+
+
+/**********************************************
+ * Tracks in tunnels:
+ **********************************************/
+
+spriteset(tunnel_overlays_SAA4, "gfx/SAA4/tunnel_track.png") {
+    tmpl_tunnel_tracks()
+}
+
+/**********************************************
+ * Depots:
+ **********************************************/
+
+/* Depots have differing sprites for normal and e-rail */
+spriteset(depot_normal_rail_SAA4, "gfx/SAA4/depot_normal.png") {
+    tmpl_depot()
+}
+spriteset(depot_electric_rail_SAA4, "gfx/SAA4/depot_electric.png") {
+    tmpl_depot()
+}
+
+
+/**********************************************
+ * Bridge surfaces:
+ **********************************************/
+/* Spriteset for bridge surfaces */
+spriteset(bridge_overlay_SAA4, "gfx/SAA4/rails_overlays.png") {
+    tmpl_bridges_overlay()
+}
+
+spriteset(bridge_underlay_SAA4, "gfx/SAA4/rails_overlays.png") {
+    tmpl_bridges_underlay()
+}
+
+switch(FEAT_RAILTYPES, SELF, bridge_switch_SAA4, param_bridgegraphics) {
+ 0: bridge_overlay_SAA4;
+ bridge_underlay_SAA4;
+}
+
+
+/**********************************************
+ * Fences:
+ **********************************************/
+
+/* Spriteset for (company-coloured) fences */
+spriteset(fencesCC_SAA4, "gfx/SAA4/SAA4fences.png") {
+    tmpl_fences(0)
+}
+
+/**********************************************
+ * GUI sprites:
+ **********************************************/
+
+/* Spritesets for the normal and electric GUI */
+spriteset(gui_normal_SAA4, "gfx/SAA4/gui_rail.png") {
+    tmpl_gui()
+}
+spriteset(gui_electric_SAA4, "gfx/SAA4/gui_erail.png") {
+    tmpl_gui()
+}
+
+/**********************************************
+ * Railtype definitions:
+ **********************************************/
+
+/* Define the normal rails */
+item(FEAT_RAILTYPES, SAA4, 5) {
+    /* Set only the most essential properties,
+     * Lots of compatible railtypes are defined to allow compatibility with
+     * various other sets out there */
+    property {
+   label: "SAA4";
+         name: string(STR_TRACK_TYPE_SAA4);
+         menu_text: string(STR_CONSTRUCTION_SAA4);
+   toolbar_caption: string(STR_CONSTRUCTION_SAA4);
+         build_window_caption: string(STR_VEHICLE_CONSTRUCTION_SAA4);
+         autoreplace_text: string(STR_AUTOREPLACE_SAA4);
+         new_engine_text: string(STR_NEW_ENGINE_SAA4);
+        compatible_railtype_list: ["RAIL", "RLOW", "RMED", "RHIG", "SAAN", "SABN", "SACN", "SBAN", "SBBN", "SBCN", "SCAN", "SCBN", "SCCN", "SDAN", "SDBN", "ELRL", "ELOW", "EMED", "EHIG", "HSTR", "SAAE", "SABE", "SACE", "SBAE", "SBBE", "SBCE", "SCAE", "SCBE", "SCCE", "SDAE", "SDBE", "SEAE", "SEBE", "3RDR", "3LOW", "3MED", "SAA3", "SAB3", "SAC3", "SBA3", "SBB3", "SBC3", "SCA3", "SCB3", "SCC3", "4RDR", "4LOW", "4MED", "SAA4", "SAB4", "SAC4", "SBA4", "SBB4", "SBC4", "SCA4", "SCB4", "SCC4", "3RDC", "CLOW", "CMED", "SAAZ", "SABZ", "SACZ", "SBAZ", "SBBZ", "SBCZ", "SCAZ", "SCBZ", "SCCZ"];
+        powered_railtype_list: ["4RDR", "4LOW", "4MED", "SAA4", "SAB4", "SAC4", "SBA4", "SBB4", "SBC4", "SCA4", "SCB4", "SCC4", "3RDC", "CLOW", "CMED", "SAAZ", "SABZ", "SACZ", "SBAZ", "SBBZ", "SBCZ", "SCAZ", "SCBZ", "SCCZ"];
+   curve_speed_multiplier: 1;
+         station_graphics: RAILTYPE_STATION_NORMAL;
+         construction_cost: 12;
+         speed_limit: (62*param_speedlimit) mph;
+         acceleration_model: ACC_MODEL_RAIL;
+  introduction_date: date(1890,04,01);
+    }
+
+    /* Associate graphics with this railtype */
+    graphics {
+        track_overlay: track_overlays_SAA4;
+        underlay: track_underlays_SAA4;
+        level_crossings: level_crossing_SAA4_switch;
+        tunnels: tunnel_overlays_SAA4;
+        depots: depot_normal_rail_SAA4;
+        bridge_surfaces: bridge_switch_SAA4;
+        fences: fencesCC_SAA4;
+        gui: gui_normal_SAA4;
+        /* Caternary is not not implemented here, use the default */
+    }
+}
+# 16 "BRTracks.pnml" 2

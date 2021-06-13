@@ -1,0 +1,23 @@
+
+template tmpl_signals(x,y) {
+	[x +   0, y, 20, 30, -9, -28] // ne-sw red
+	[x +  30, y, 20, 30, -9, -28] //       green
+	[x +  60, y, 20, 30, -9, -28] // sw-ne red
+	[x +  90, y, 20, 30, -9, -28] //       green
+	[x + 120, y, 20, 30, -9, -28] // se-nw red
+	[x + 150, y, 20, 30, -9, -28] //       green
+	[x + 180, y, 20, 30, -9, -28] // nw-se red
+	[x + 210, y, 20, 30, -9, -28] //       green
+	[x + 300, y, 20, 30, -9, -28] // e-w   red
+	[x + 330, y, 20, 30, -9, -28] //       green
+	[x + 240, y, 20, 30, -9, -28] // w-e   red
+	[x + 270, y, 20, 30, -9, -28] //       green
+	[x + 360, y, 20, 30, -9, -28] // s-n   red
+	[x + 390, y, 20, 30, -9, -28] //       green
+	[x + 420, y, 20, 30, -9, -28] // n-s   red
+	[x + 450, y, 20, 30, -9, -28] //       green
+}
+
+//1275-1290 signals
+replace spr1275(1275, "gfx/Signals/Standard/light-generic.png") { tmpl_signals(10, 50) }
+

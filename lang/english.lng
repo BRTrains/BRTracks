@@ -1,0 +1,67 @@
+##grflangid 0x01
+STR_GRF_NAME:BRTracks v0.2.0.3
+STR_GRF_DESCRIPTION			:{ORANGE}BRTracks{BLACK} adds new track types to OpenTTD aimed at a historical reference of British Railways. Also includes third rail, broad gauge and narrow gauge tracks.{}See readme for credits.{}License{SILVER}GPL v3{BLACK}{}
+
+STR_PARAM_SPEEDLIMIT			:Track Speed Limits 
+STR_PARAM_SPEEDLIMIT_DESC		:Whether to set predefined speed limits for tracks in BRTracks. (Default: On)
+
+STR_PARAM_COMPLEX_MODE			:Complexity Mode
+STR_PARAM_COMPLEX_MODE_DESC		:What complexity mode to activate with the set. (Default: Historical)
+STR_COMPLEX_NONE				:Standard Mode
+STR_COMPLEX_HISTORIC			:Historical Mode
+STR_COMPLEX_SPEED				:Complex Speed Mode
+STR_COMPLEX_RA					:Route Availability Mode
+STR_COMPLEX_GAUGE				:Complex Gauge Mode
+STR_COMPLEX_ELECTRIFICATION		:Complex Electrification Mode
+
+STR_PARAM_BRIDGE				:Bridge Graphics
+STR_PARAM_BRIDGE_DESC			:Whether to have Ballast on bridges. (Default: Without)
+STR_BRIDGE_OVERLAY				:Without Ballast
+STR_BRIDGE_UNDERLAY				:With Ballast
+
+STR_PARAM_BALLAST				:Ballast Width
+STR_PARAM_BALLAST_DESC			:What width ballast to have. (Default: Standard)
+STR_BALLAST_NORMAL				:Standard Width Ballast
+STR_BALLAST_WIDE				:Full Width Ballast
+
+STR_TRACK_TYPE_SAAN		:Standard Gauge Rail
+STR_CONSTRUCTION_SAAN		:Standard Gauge Rail Construction
+STR_VEHICLE_CONSTRUCTION_SAAN	:New Standard Gauge Vehicle
+STR_AUTOREPLACE_SAAN		:Standard Gauge Vehicles
+STR_NEW_ENGINE_SAAN		:Standard Gauge Vehicle
+
+STR_TRACK_TYPE_SAAE		:Standard Gauge 25kV OHLE Rail
+STR_CONSTRUCTION_SAAE		:Standard Gauge 25kV OHLE Rail Construction
+STR_VEHICLE_CONSTRUCTION_SAAE	:New Standard Gauge 25kV OHLE Vehicle
+STR_AUTOREPLACE_SAAE		:Standard Gauge 25kV OHLE Vehicles
+STR_NEW_ENGINE_SAAE		:Standard Gauge 25kV OHLE Vehicle
+
+STR_TRACK_TYPE_SAA3		:Standard Gauge 750V DC 3rd Rail
+STR_CONSTRUCTION_SAA3		:Standard Gauge 750V DC 3rd Rail Construction
+STR_VEHICLE_CONSTRUCTION_SAA3	:New Standard Gauge 750V DC 3rd Rail Vehicle
+STR_AUTOREPLACE_SAA3		:Standard Gauge 750V DC 3rd Rail Vehicles
+STR_NEW_ENGINE_SAA3		:Standard Gauge 750V DC 3rd Rail Vehicle
+
+STR_TRACK_TYPE_SAAZ		:Standard Gauge Dual Voltage 750V/25kV Rail
+STR_CONSTRUCTION_SAAZ		:Standard Gauge Dual Voltage 750V/25kV Rail Construction
+STR_VEHICLE_CONSTRUCTION_SAAZ	:New Standard Gauge Dual Voltage 750V/25kV Vehicle
+STR_AUTOREPLACE_SAAZ		:Standard Gauge Dual Voltage 750V/25kV Vehicles
+STR_NEW_ENGINE_SAAZ		:Standard Gauge Dual Voltage 750V/25kV Vehicle
+
+STR_TRACK_TYPE_SAA4		:Standard Gauge 630V DC 4th Rail
+STR_CONSTRUCTION_SAA4		:Standard Gauge 630V DC 4th Rail Construction
+STR_VEHICLE_CONSTRUCTION_SAA4	:New Standard Gauge 630V DC 4th Rail Vehicle
+STR_AUTOREPLACE_SAA4		:Standard Gauge 630V DC 4th Rail Vehicles
+STR_NEW_ENGINE_SAA4		:Standard Gauge 630V DC 4th Rail Vehicle
+
+STR_TRACK_TYPE_SBAE		:High Speed 25kV OHLE Rail
+STR_CONSTRUCTION_SBAE		:High Speed 25kV OHLE Rail Construction
+STR_VEHICLE_CONSTRUCTION_SBAE	:New High Speed 25kV OHLE Vehicle
+STR_AUTOREPLACE_SBAE		:High Speed 25kV OHLE Vehicles
+STR_NEW_ENGINE_SBAE		:High Speed 25kV OHLE Vehicle
+
+STR_TRACK_TYPE_SCAE		:Very High Speed 25kV OHLE Rail
+STR_CONSTRUCTION_SCAE		:Very High Speed 25kV OHLE Rail Construction
+STR_VEHICLE_CONSTRUCTION_SCAE	:New Very High Speed 25kV OHLE Vehicle
+STR_AUTOREPLACE_SCAE		:Very High Speed 25kV OHLE Vehicles
+STR_NEW_ENGINE_SCAE		:Very High Speed 25kV OHLE Vehicle

@@ -1,0 +1,147 @@
+
+/* Spriteset containing all underlays */
+spriteset(track_underlays_SAA4, "gfx/SAA4/rails_overlays.png") {
+    tmpl_underlay_railtypes()
+}
+
+
+/* Spriteset for overlays */
+spriteset(track_overlays_SAA4, "gfx/SAA4/rails_overlays.png") {
+ tmpl_overlay_railtypes()
+}
+
+
+/**********************************************
+ * Level crossings:
+ **********************************************/
+
+// right hand traffic:
+spriteset(lc_right_closed_SAA4, "gfx/SAA4/lc_right.png") {
+    tmpl_level_crossing_railtypes_closed(100)
+}
+spriteset(lc_right_open_SAA4, "gfx/SAA4/lc_right.png") {
+    tmpl_level_crossing_railtypes_open(50)
+}
+
+// left hand traffic:
+spriteset(lc_left_closed_SAA4, "gfx/SAA4/lc_left.png") {
+    tmpl_level_crossing_railtypes_left_closed(100)
+}
+spriteset(lc_left_open_SAA4, "gfx/SAA4/lc_left.png") {
+    tmpl_level_crossing_railtypes_left_open(50)
+}
+
+switch(FEAT_RAILTYPES, SELF, right_level_crossing_SAA4_state_switch, level_crossing_status) {
+    LEVEL_CROSSING_CLOSED: lc_right_closed;
+    lc_right_open;
+}
+switch(FEAT_RAILTYPES, SELF, left_level_crossing_SAA4_state_switch, level_crossing_status) {
+    LEVEL_CROSSING_CLOSED: lc_left_closed;
+    lc_left_open;
+}
+switch(FEAT_RAILTYPES, SELF, level_crossing_SAA4_switch, traffic_side) {
+    TRAFFIC_SIDE_LEFT: left_level_crossing_SAA4_state_switch;
+    right_level_crossing_SAA4_state_switch;
+}
+
+
+/**********************************************
+ * Tracks in tunnels:
+ **********************************************/
+
+spriteset(tunnel_overlays_SAA4, "gfx/SAA4/tunnel_track.png") {
+    tmpl_tunnel_tracks()
+}
+
+/**********************************************
+ * Depots:
+ **********************************************/
+
+/* Depots have differing sprites for normal and e-rail */
+spriteset(depot_normal_rail_SAA4, "gfx/SAA4/depot_normal.png") {
+    tmpl_depot()
+}
+spriteset(depot_electric_rail_SAA4, "gfx/SAA4/depot_electric.png") {
+    tmpl_depot()
+}
+
+
+/**********************************************
+ * Bridge surfaces:
+ **********************************************/
+/* Spriteset for bridge surfaces */
+spriteset(bridge_overlay_SAA4, "gfx/SAA4/rails_overlays.png") {
+    tmpl_bridges_overlay()
+}
+
+spriteset(bridge_underlay_SAA4, "gfx/SAA4/rails_overlays.png") {
+    tmpl_bridges_underlay()
+}
+
+switch(FEAT_RAILTYPES, SELF, bridge_switch_SAA4, param_bridgegraphics) {
+	0: bridge_overlay_SAA4;
+	bridge_underlay_SAA4;
+}
+
+
+/**********************************************
+ * Fences:
+ **********************************************/
+
+/* Spriteset for (company-coloured) fences */
+spriteset(fencesCC_SAA4, "gfx/SAA4/SAA4fences.png") {
+    tmpl_fences(0)
+}
+
+/**********************************************
+ * GUI sprites:
+ **********************************************/
+
+/* Spritesets for the normal and electric GUI */
+spriteset(gui_normal_SAA4, "gfx/SAA4/gui_rail.png") {
+    tmpl_gui()
+}
+spriteset(gui_electric_SAA4, "gfx/SAA4/gui_erail.png") {
+    tmpl_gui()
+}
+
+/**********************************************
+ * Railtype definitions:
+ **********************************************/
+
+/* Define the normal rails */
+item(FEAT_RAILTYPES, SAA4, 5) {
+    /* Set only the most essential properties,
+     * Lots of compatible railtypes are defined to allow compatibility with
+     * various other sets out there */
+    property {
+		 label:                      "SAA4";
+         name:                       string(STR_TRACK_TYPE_SAA4);
+         menu_text:                  string(STR_CONSTRUCTION_SAA4);
+		 toolbar_caption:			 string(STR_CONSTRUCTION_SAA4);
+         build_window_caption:       string(STR_VEHICLE_CONSTRUCTION_SAA4);
+         autoreplace_text:           string(STR_AUTOREPLACE_SAA4);
+         new_engine_text:            string(STR_NEW_ENGINE_SAA4);
+        compatible_railtype_list: [STANDARD_GAUGE_ALL];
+        powered_railtype_list: [STANDARD_GAUGE_4TH_RAIL, STANDARD_GAUGE_DUAL];
+		 curve_speed_multiplier:     1;
+         station_graphics:           RAILTYPE_STATION_NORMAL;                  
+         construction_cost:          12;                                      
+         speed_limit:                (62*param_speedlimit) mph;
+         acceleration_model:         ACC_MODEL_RAIL;
+		introduction_date: 			 date(1890,04,01);
+    }
+
+    /* Associate graphics with this railtype */
+    graphics {
+        track_overlay: track_overlays_SAA4;
+        underlay: track_underlays_SAA4;
+        level_crossings: level_crossing_SAA4_switch;
+        tunnels: tunnel_overlays_SAA4;
+        depots: depot_normal_rail_SAA4;
+        bridge_surfaces: bridge_switch_SAA4;
+        fences: fencesCC_SAA4;
+        gui: gui_normal_SAA4;
+        /* Caternary is not not implemented here, use the default */
+    }
+}

@@ -1,0 +1,191 @@
+
+/* Spriteset containing all underlays */
+spriteset(track_underlays_normal, "gfx/SAAN/rails_overlays_wide2.png") {
+    tmpl_underlay_railtypes()
+}
+
+spriteset(track_underlays_wide, "gfx/SAAN/rails_overlays_wide2.png") {
+    tmpl_underlay_railtypes()
+}
+
+switch(FEAT_RAILTYPES, SELF, track_underlays, param_ballastwidth) {
+	0: track_underlays_normal;
+	1: track_underlays_wide;
+}
+
+
+/* Spriteset for overlays */
+spriteset(track_overlays, "gfx/SAAN/rails_overlays_wide2.png") {
+ tmpl_overlay_railtypes()
+}
+
+
+/**********************************************
+ * Level crossings:
+ **********************************************/
+
+// right hand traffic:
+spriteset(lc_right_closed, "gfx/SAAN/lc_right.png") {
+    tmpl_level_crossing_railtypes_closed(100)
+}
+spriteset(lc_right_open, "gfx/SAAN/lc_right.png") {
+    tmpl_level_crossing_railtypes_open(50)
+}
+
+// left hand traffic:
+spriteset(lc_left_closed, "gfx/SAAN/lc_left.png") {
+    tmpl_level_crossing_railtypes_left_closed(100)
+}
+spriteset(lc_left_open, "gfx/SAAN/lc_left.png") {
+    tmpl_level_crossing_railtypes_left_open(50)
+}
+
+switch(FEAT_RAILTYPES, SELF, right_level_crossing_state_switch, level_crossing_status) {
+    LEVEL_CROSSING_CLOSED: lc_right_closed;
+    lc_right_open;
+}
+switch(FEAT_RAILTYPES, SELF, left_level_crossing_state_switch, level_crossing_status) {
+    LEVEL_CROSSING_CLOSED: lc_left_closed;
+    lc_left_open;
+}
+switch(FEAT_RAILTYPES, SELF, level_crossing_switch, traffic_side) {
+    TRAFFIC_SIDE_LEFT: left_level_crossing_state_switch;
+    right_level_crossing_state_switch;
+}
+
+
+/**********************************************
+ * Tracks in tunnels:
+ **********************************************/
+
+spriteset(tunnel_overlays, "gfx/SAAN/tunnel_track2.png") {
+    tmpl_tunnel_tracks()
+}
+
+/**********************************************
+ * Depots:
+ **********************************************/
+
+/* Depots have differing sprites for normal and e-rail */
+spriteset(depot_normal_rail, "gfx/SAAN/depot_normal.png") {
+    tmpl_depot()
+}
+spriteset(depot_electric_rail, "gfx/SAAN/depot_electric.png") {
+    tmpl_depot()
+}
+
+
+/**********************************************
+ * Bridge surfaces:
+ **********************************************/
+/* Spriteset for bridge surfaces */
+spriteset(bridge_overlay, "gfx/SAAN/rails_overlays.png") {
+    tmpl_bridges_overlay()
+}
+
+spriteset(bridge_underlay, "gfx/SAAN/rails_overlays.png") {
+    tmpl_bridges_underlay()
+}
+
+switch(FEAT_RAILTYPES, SELF, bridge_switch, param_bridgegraphics) {
+	0: bridge_overlay;
+	bridge_underlay;
+}
+
+/**********************************************
+ * Fences:
+ **********************************************/
+
+/* Spriteset for (company-coloured) fences */
+spriteset(fencesCC, "gfx/SAAN/fences.png") {
+    tmpl_fences(0)
+}
+
+/**********************************************
+ * GUI sprites:
+ **********************************************/
+
+/* Spritesets for the normal and electric GUI */
+spriteset(gui_normal, "gfx/SAAN/gui_rail.png") {
+    tmpl_gui()
+}
+spriteset(gui_electric, "gfx/SAAN/gui_erail.png") {
+    tmpl_gui()
+}
+
+/**********************************************
+ * Railtype definitions:
+ **********************************************/
+
+/* Define the normal rails */
+item(FEAT_RAILTYPES, SAAN, 0) {
+    /* Set only the most essential properties,
+     * Lots of compatible railtypes are defined to allow compatibility with
+     * various other sets out there */
+    property {
+		 label:                      "RAIL";
+         name:                       string(STR_TRACK_TYPE_SAAN);
+         menu_text:                  string(STR_CONSTRUCTION_SAAN);
+		 toolbar_caption:			 string(STR_CONSTRUCTION_SAAN);
+         build_window_caption:       string(STR_VEHICLE_CONSTRUCTION_SAAN);
+         autoreplace_text:           string(STR_AUTOREPLACE_SAAN);
+         new_engine_text:            string(STR_NEW_ENGINE_SAAN);	
+        compatible_railtype_list: [STANDARD_GAUGE_ALL];
+        powered_railtype_list: [STANDARD_GAUGE_ALL];
+		 curve_speed_multiplier:     1;
+         station_graphics:           RAILTYPE_STATION_NORMAL;                  
+         construction_cost:          8;                                      
+         speed_limit:                (125*param_speedlimit) mph;
+         acceleration_model:         ACC_MODEL_RAIL;  
+    }
+
+    /* Associate graphics with this railtype */
+    graphics {
+        track_overlay: track_overlays;
+        underlay: track_underlays;
+        level_crossings: level_crossing_switch;
+        tunnels: tunnel_overlays;
+        depots: depot_normal_rail;
+        bridge_surfaces: bridge_switch;
+        fences: fencesCC;
+        gui: gui_normal;
+        /* Caternary is not not implemented here, use the default */
+    }
+}
+
+item(FEAT_RAILTYPES, SAAE, 1) {
+    /* Set only the most essential properties,
+     * Lots of compatible railtypes are defined to allow compatibility with
+     * various other sets out there */
+    property {
+		 label:                      "ELRL";
+         name:                       string(STR_TRACK_TYPE_SAAE);
+         menu_text:                  string(STR_CONSTRUCTION_SAAE);
+		 toolbar_caption:			 string(STR_CONSTRUCTION_SAAE);
+         build_window_caption:       string(STR_VEHICLE_CONSTRUCTION_SAAE);
+         autoreplace_text:           string(STR_AUTOREPLACE_SAAE);
+         new_engine_text:            string(STR_NEW_ENGINE_SAAE);
+        compatible_railtype_list: [STANDARD_GAUGE_ALL];
+        powered_railtype_list: [STANDARD_GAUGE_CATENARY, STANDARD_GAUGE_DUAL];
+		railtype_flags:             bitmask(RAILTYPE_FLAG_CATENARY);
+		 curve_speed_multiplier:     1;
+         station_graphics:           RAILTYPE_STATION_NORMAL;                  
+         construction_cost:          12;                                      
+         speed_limit:                (125*param_speedlimit) mph;
+         acceleration_model:         ACC_MODEL_RAIL;
+		introduction_date: 			 date(1959,04,01);		 
+    }
+
+    /* Associate graphics with this railtype */
+    graphics {
+        track_overlay: track_overlays;
+        underlay: track_underlays;
+        level_crossings: level_crossing_switch;
+        tunnels: tunnel_overlays;
+        depots: depot_electric_rail;
+        bridge_surfaces: bridge_switch;
+        fences: fencesCC;
+        gui: gui_electric;
+        /* Caternary is not not implemented here, use the default */
+    }
+}

@@ -1,0 +1,147 @@
+
+/* Spriteset containing all underlays */
+spriteset(track_underlays_SBAE, "gfx/SBAE/rails_overlays.png") {
+    tmpl_underlay_railtypes()
+}
+
+
+/* Spriteset for overlays */
+spriteset(track_overlays_SBAE, "gfx/SBAE/rails_overlays.png") {
+ tmpl_overlay_railtypes()
+}
+
+
+/**********************************************
+ * Level crossings:
+ **********************************************/
+
+// right hand traffic:
+spriteset(lc_right_closed_SBAE, "gfx/SBAE/lc_right.png") {
+    tmpl_level_crossing_railtypes_closed(100)
+}
+spriteset(lc_right_open_SBAE, "gfx/SBAE/lc_right.png") {
+    tmpl_level_crossing_railtypes_open(50)
+}
+
+// left hand traffic:
+spriteset(lc_left_closed_SBAE, "gfx/SBAE/lc_left.png") {
+    tmpl_level_crossing_railtypes_left_closed(100)
+}
+spriteset(lc_left_open_SBAE, "gfx/SBAE/lc_left.png") {
+    tmpl_level_crossing_railtypes_left_open(50)
+}
+
+switch(FEAT_RAILTYPES, SELF, right_level_crossing_state_switch_SBAE, level_crossing_status) {
+    LEVEL_CROSSING_CLOSED: lc_right_closed;
+    lc_right_open;
+}
+switch(FEAT_RAILTYPES, SELF, left_level_crossing_state_switch_SBAE, level_crossing_status) {
+    LEVEL_CROSSING_CLOSED: lc_left_closed;
+    lc_left_open;
+}
+switch(FEAT_RAILTYPES, SELF, level_crossing_switch_SBAE, traffic_side) {
+    TRAFFIC_SIDE_LEFT: left_level_crossing_state_switch_SBAE;
+    right_level_crossing_state_switch_SBAE;
+}
+
+
+/**********************************************
+ * Tracks in tunnels:
+ **********************************************/
+
+spriteset(tunnel_overlays_SBAE, "gfx/SBAE/tunnel_track.png") {
+    tmpl_tunnel_tracks()
+}
+
+/**********************************************
+ * Depots:
+ **********************************************/
+
+/* Depots have differing sprites for normal and e-rail */
+spriteset(depot_normal_rail_SBAE, "gfx/SBAE/depot_normal.png") {
+    tmpl_depot()
+}
+spriteset(depot_electric_rail_SBAE, "gfx/SBAE/depot_electric.png") {
+    tmpl_depot()
+}
+
+
+/**********************************************
+ * Bridge surfaces:
+ **********************************************/
+/* Spriteset for bridge surfaces */
+spriteset(bridge_overlay_SBAE, "gfx/SBAE/rails_overlays.png") {
+    tmpl_bridges_overlay()
+}
+
+spriteset(bridge_underlay_SBAE, "gfx/SBAE/rails_overlays.png") {
+    tmpl_bridges_underlay()
+}
+
+switch(FEAT_RAILTYPES, SELF, bridge_switch_SBAE, param_bridgegraphics) {
+	0: bridge_overlay_SBAE;
+	bridge_underlay_SBAE;
+}
+
+
+/**********************************************
+ * Fences:
+ **********************************************/
+
+/* Spriteset for (company-coloured) fences */
+spriteset(fencesCC_SBAE, "gfx/SBAE/fences.png") {
+    tmpl_fences(0)
+}
+
+/**********************************************
+ * GUI sprites:
+ **********************************************/
+
+/* Spritesets for the normal and electric GUI */
+spriteset(gui_normal_SBAE, "gfx/SBAE/gui_rail.png") {
+    tmpl_gui()
+}
+spriteset(gui_electric_SBAE, "gfx/SBAE/gui_erail.png") {
+    tmpl_gui()
+}
+
+/**********************************************
+ * Railtype definitions:
+ **********************************************/
+
+item(FEAT_RAILTYPES, SBAE, 6) {
+    /* Set only the most essential properties,
+     * Lots of compatible railtypes are defined to allow compatibility with
+     * various other sets out there */
+    property {
+		 label:                      "SBAE";
+         name:                       string(STR_TRACK_TYPE_SBAE);
+         menu_text:                  string(STR_CONSTRUCTION_SBAE);
+		 toolbar_caption:			 string(STR_CONSTRUCTION_SBAE);
+         build_window_caption:       string(STR_VEHICLE_CONSTRUCTION_SBAE);
+         autoreplace_text:           string(STR_AUTOREPLACE_SBAE);
+         new_engine_text:            string(STR_NEW_ENGINE_SBAE);
+        compatible_railtype_list: [STANDARD_GAUGE_ALL];
+        powered_railtype_list: [STANDARD_GAUGE_CATENARY, STANDARD_GAUGE_DUAL];
+		railtype_flags:             bitmask(RAILTYPE_FLAG_CATENARY, RAILTYPE_FLAG_NO_LEVEL_CROSSING);
+		 curve_speed_multiplier:     1;
+         station_graphics:           RAILTYPE_STATION_NORMAL;                  
+         construction_cost:          12;                                      
+         speed_limit:                (143*param_speedlimit) mph;
+         acceleration_model:         ACC_MODEL_RAIL;
+		introduction_date: 			 date(1988,04,01);		 
+    }
+
+    /* Associate graphics with this railtype */
+    graphics {
+        track_overlay: track_overlays_SBAE;
+        underlay: track_underlays_SBAE;
+        level_crossings: level_crossing_switch_SBAE;
+        tunnels: tunnel_overlays_SBAE;
+        depots: depot_electric_rail_SBAE;
+        bridge_surfaces: bridge_switch_SBAE;
+        fences: fencesCC_SBAE;
+        gui: gui_electric_SBAE;
+        /* Caternary is not not implemented here, use the default */
+    }
+}

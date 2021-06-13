@@ -1,0 +1,20 @@
+#include "src/header.pnml"
+#include "src/tt-table-definitions.pnml"
+#include "src/spritetemplate.pnml"
+
+railtypetable {
+  STANDARD_GAUGE_ALL
+}
+
+#include "src/signals.pnml"
+#include "src/extra-signals.pnml"
+#include "src/SAAN.pnml"
+#include "src/SBAE.pnml"
+#include "src/SCAE.pnml"
+#include "src/SAA3.pnml"
+#include "src/SAA4.pnml"
+
+
+
+		
+

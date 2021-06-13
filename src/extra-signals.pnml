@@ -1,0 +1,142 @@
+/* Signals used for both traffic sides */
+
+
+template tmpl_signals_file(x,y,file) {	
+	[x +   0, y, 20, 30, -9, -28, file] // ne-sw red
+	[x +  30, y, 20, 30, -9, -28, file] //       green
+	[x +  60, y, 20, 30, -9, -28, file] // sw-ne red
+	[x +  90, y, 20, 30, -9, -28, file] //       green
+	[x + 120, y, 20, 30, -9, -28, file] // se-nw red
+	[x + 150, y, 20, 30, -9, -28, file] //       green
+	[x + 180, y, 20, 30, -9, -28, file] // nw-se red
+	[x + 210, y, 20, 30, -9, -28, file] //       green
+	[x + 300, y, 20, 30, -9, -28, file] // e-w   red
+	[x + 330, y, 20, 30, -9, -28, file] //       green
+	[x + 240, y, 20, 30, -9, -28, file] // w-e   red
+	[x + 270, y, 20, 30, -9, -28, file] //       green
+	[x + 360, y, 20, 30, -9, -28, file] // s-n   red
+	[x + 390, y, 20, 30, -9, -28, file] //       green
+	[x + 420, y, 20, 30, -9, -28, file] // n-s   red	
+	[x + 450, y, 20, 30, -9, -28, file] //       green	
+}
+
+replacenew(PRE_SIGNAL, "") {
+	tmpl_signals_file( 10,  50, "gfx/Signals/Standard/light-entry.png")
+	tmpl_signals_file( 10,  50, "gfx/Signals/Standard/light-exit.png")
+	tmpl_signals_file( 10,  50, "gfx/Signals/Standard/light-combo.png")
+}
+
+
+// British style. Replace later by German style, if necessary
+replacenew(PRE_SIGNAL_SEMAPHORE_PBS, "", 48) {
+	tmpl_signals_file( 10,  50, "gfx/Signals/Standard/semaphores-leftside-generic.png")
+	tmpl_signals_file( 10,  50, "gfx/Signals/Standard/semaphores-leftside-entry.png")
+	tmpl_signals_file( 10,  50, "gfx/Signals/Standard/semaphores-leftside-exit.png")
+	tmpl_signals_file( 10,  50, "gfx/Signals/Standard/semaphores-leftside-combo.png")
+
+//PBS unused type 1 toyland (standard)
+	[ 150,    6,   5,  22,  -2, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 166,    6,   5,  22,  -2, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 182,    6,   4,  22,  -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 198,    6,   4,  22,  -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 214,    6,   4,  22,  -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 230,    6,   4,  22,  -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 246,    6,   5,  22,  -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 262,    6,   5,  22,  -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 278,    6,   5,  22,  -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 294,    6,   5,  22,  -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 310,    6,   5,  22,  -2, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 326,    6,   5,  22,  -2, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 341,    6,   6,  22,  -3, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 357,    6,   6,  22,  -3, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 373,    6,   6,  22,  -3, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 389,    6,   6,  22,  -3, -20, "gfx/Signals/Standard/signals_pbs.png"]
+//PBS unused type 2 toyland (oneway)
+	[ 150,   36,   5,  22,  -2, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 166,   36,   5,  22,  -2, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 182,   36,   4,  22,  -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 198,   36,   4,  22,  -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 214,   36,   4,  22,  -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 230,   36,   4,  22,  -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 246,   36,   5,  22,  -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 262,   36,   5,  22,  -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 278,   36,   5,  22,  -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 294,   36,   5,  22,  -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 310,   36,   5,  22,  -2, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 326,   36,   5,  22,  -2, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 341,   36,   6,  22,  -3, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 357,   36,   6,  22,  -3, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 373,   36,   6,  22,  -3, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 389,   36,   6,  22,  -3, -20, "gfx/Signals/Standard/signals_pbs.png"]
+//PBS standard toyland
+	[ 150,    6,   5,  22,  -2, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 166,    6,   5,  22,  -2, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 182,    6,   4,  22,  -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 198,    6,   4,  22,  -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 214,    6,   4,  22,  -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 230,    6,   4,  22,  -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 246,    6,   5,  22,  -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 262,    6,   5,  22,  -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 278,    6,   5,  22,  -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 294,    6,   5,  22,  -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 310,    6,   5,  22,  -2, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 326,    6,   5,  22,  -2, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 341,    6,   6,  22,  -3, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 357,    6,   6,  22,  -3, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 373,    6,   6,  22,  -3, -20, "gfx/Signals/Standard/signals_pbs.png"]
+//PBS oneway toyland
+	[ 150,   36,   5,  22,  -2, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 166,   36,   5,  22,  -2, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 182,   36,   4,  22,  -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 198,   36,   4,  22,  -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 214,   36,   4,  22,  -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 230,   36,   4,  22,  -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 246,   36,   5,  22,  -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 262,   36,   5,  22,  -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 278,   36,   5,  22,  -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 294,   36,   5,  22,  -1, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 310,   36,   5,  22,  -2, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 326,   36,   5,  22,  -2, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 341,   36,   6,  22,  -3, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 357,   36,   6,  22,  -3, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 373,   36,   6,  22,  -3, -20, "gfx/Signals/Standard/signals_pbs.png"]
+	[ 389,   36,   6,  22,  -3, -20, "gfx/Signals/Standard/signals_pbs.png"]
+
+	tmpl_signals_file( 10,  50, "gfx/Signals/Standard/semaphores-leftside-pbs.png")       //semaphore PBS 2way
+	tmpl_signals_file( 10,  50, "gfx/Signals/Standard/semaphores-leftside-pbs-oneway.png")//semaphore pbs 1way
+
+//semaphore pbs unused
+	[ 738,  248,  11,  21,  -6, -19, "gfx/Signals/Standard/semaphores.png"]
+	[ 754,  248,   8,  23,  -3, -21, "gfx/Signals/Standard/semaphores.png"]
+	[ 770,  248,  11,  21,   0, -19, "gfx/Signals/Standard/semaphores.png"]
+	[ 786,  248,  10,  21,   0, -19, "gfx/Signals/Standard/semaphores.png"]
+	[   2,  296,  10,  21,   0, -19, "gfx/Signals/Standard/semaphores.png"]
+	[  18,  296,   7,  23,   0, -21, "gfx/Signals/Standard/semaphores.png"]
+	[  34,  296,  11,  21,  -7, -19, "gfx/Signals/Standard/semaphores.png"]
+	[  50,  296,  11,  21,  -7, -19, "gfx/Signals/Standard/semaphores.png"]
+	[  66,  296,   4,  21,   1, -19, "gfx/Signals/Standard/semaphores.png"]
+	[  82,  296,   4,  24,   1, -22, "gfx/Signals/Standard/semaphores.png"]
+	[  98,  296,   4,  23,  -1, -21, "gfx/Signals/Standard/semaphores.png"]
+	[ 114,  296,   4,  26,  -1, -24, "gfx/Signals/Standard/semaphores.png"]
+	[ 130,  296,  12,  21,  -7, -19, "gfx/Signals/Standard/semaphores.png"]
+	[ 162,  296,   9,  21,  -4, -19, "gfx/Signals/Standard/semaphores.png"]
+	[ 178,  296,  12,  21,   0, -19, "gfx/Signals/Standard/semaphores.png"]
+	[ 210,  296,   9,  21,   0, -19, "gfx/Signals/Standard/semaphores.png"]
+	[ 226,  296,  11,  21,  -6, -19, "gfx/Signals/Standard/semaphores.png"]
+	[ 242,  296,   8,  23,  -3, -21, "gfx/Signals/Standard/semaphores.png"]
+	[ 258,  296,  11,  21,   0, -19, "gfx/Signals/Standard/semaphores.png"]
+	[ 274,  296,  10,  21,   0, -19, "gfx/Signals/Standard/semaphores.png"]
+	[ 290,  296,  10,  21,   0, -19, "gfx/Signals/Standard/semaphores.png"]
+	[ 306,  296,   7,  23,   0, -21, "gfx/Signals/Standard/semaphores.png"]
+	[ 322,  296,  11,  21,  -7, -19, "gfx/Signals/Standard/semaphores.png"]
+	[ 338,  296,  11,  21,  -7, -19, "gfx/Signals/Standard/semaphores.png"]
+	[ 354,  296,   4,  21,   1, -19, "gfx/Signals/Standard/semaphores.png"]
+	[ 370,  296,   4,  24,   1, -22, "gfx/Signals/Standard/semaphores.png"]
+	[ 386,  296,   4,  23,  -1, -21, "gfx/Signals/Standard/semaphores.png"]
+	[ 402,  296,   4,  26,  -1, -24, "gfx/Signals/Standard/semaphores.png"]
+	[ 418,  296,  12,  21,  -7, -19, "gfx/Signals/Standard/semaphores.png"]
+	[ 450,  296,   9,  21,  -4, -19, "gfx/Signals/Standard/semaphores.png"]
+	[ 466,  296,  12,  21,   0, -19, "gfx/Signals/Standard/semaphores.png"]
+	[ 498,  296,   9,  21,   0, -19, "gfx/Signals/Standard/semaphores.png"]
+}
+
